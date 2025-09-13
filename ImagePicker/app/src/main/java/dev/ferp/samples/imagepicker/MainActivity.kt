@@ -4,44 +4,28 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.activity.viewModels
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import dev.ferp.samples.imagepicker.addprofilepic.AddProfilePicScreen
+import dev.ferp.samples.imagepicker.addprofilepic.AddProfilePicViewModel
 import dev.ferp.samples.imagepicker.ui.theme.ImagePickerTheme
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: AddProfilePicViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             ImagePickerTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                AddProfilePicScreen(
+                    viewModel = viewModel,
+                    modifier = Modifier,
+                    onSave = ::finish,
+                    onDismiss = ::finish
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ImagePickerTheme {
-        Greeting("Android")
     }
 }
