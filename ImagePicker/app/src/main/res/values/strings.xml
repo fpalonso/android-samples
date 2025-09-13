@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">ImagePicker</string>
+    <string name="profile_picture">Profile picture</string>
+    <string name="add_profile_picture">Add profile picture</string>
+    <string name="add_picture">Add picture</string>
+    <string name="edit_picture">Edit picture</string>
+    <string name="clear_picture">Clear picture</string>
+    <string name="save">Save</string>
+    <string name="dismiss">Dismiss</string>
+</resources>
