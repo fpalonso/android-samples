@@ -32,14 +32,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import dev.ferp.samples.imagepicker.R
 
 @Composable
 fun AddProfilePicScreen(
-    viewModel: AddProfilePicViewModel,
     modifier: Modifier = Modifier,
+    viewModel: AddProfilePicViewModel = hiltViewModel(),
     onSave: () -> Unit = {},
     onDismiss: () -> Unit = {}
 ) {
@@ -143,7 +144,5 @@ private fun AddProfilePicScreen(
 @Preview(showSystemUi = true)
 @Composable
 private fun AddProfilePicScreenPreview() {
-    AddProfilePicScreen(
-        viewModel = AddProfilePicViewModel()
-    )
+    AddProfilePicScreen()
 }

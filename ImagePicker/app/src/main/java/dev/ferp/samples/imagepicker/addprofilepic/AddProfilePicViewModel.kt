@@ -3,15 +3,18 @@ package dev.ferp.samples.imagepicker.addprofilepic
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.analytics
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 internal data class AddProfilePicUiState(
     val pictureUri: String? = null
 )
 
-class AddProfilePicViewModel : ViewModel() {
+@HiltViewModel
+class AddProfilePicViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddProfilePicUiState())
     internal val uiState = _uiState.asStateFlow()
