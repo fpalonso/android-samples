@@ -1,9 +1,8 @@
 package dev.ferp.samples.imagepicker.addprofilepic
 
 import androidx.lifecycle.ViewModel
-import com.google.firebase.Firebase
-import com.google.firebase.analytics.analytics
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.ferp.samples.imagepicker.core.analytics.AddProfilePicLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -14,7 +13,9 @@ internal data class AddProfilePicUiState(
 )
 
 @HiltViewModel
-class AddProfilePicViewModel @Inject constructor() : ViewModel() {
+class AddProfilePicViewModel @Inject constructor(
+    private val logger: AddProfilePicLogger
+) : ViewModel(), AddProfilePicLogger by logger {
 
     private val _uiState = MutableStateFlow(AddProfilePicUiState())
     internal val uiState = _uiState.asStateFlow()
@@ -43,25 +44,5 @@ class AddProfilePicViewModel @Inject constructor() : ViewModel() {
 
     internal fun onDismiss() {
         logDismiss()
-    }
-
-    private fun logPicturePicked() {
-        Firebase.analytics.logEvent("profile_picture_picked", null)
-    }
-
-    private fun logPicturePickCancelled() {
-        Firebase.analytics.logEvent("profile_picture_pick_cancelled", null)
-    }
-
-    private fun logPictureCleared() {
-        Firebase.analytics.logEvent("profile_picture_cleared", null)
-    }
-
-    private fun logSaveClick() {
-        Firebase.analytics.logEvent("profile_picture_save_click", null)
-    }
-
-    private fun logDismiss() {
-        Firebase.analytics.logEvent("profile_picture_dismiss", null)
     }
 }

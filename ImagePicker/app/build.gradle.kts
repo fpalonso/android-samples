@@ -30,6 +30,15 @@ android {
             )
         }
     }
+    flavorDimensions += "analytics"
+    productFlavors {
+        create("analyticsEnabled") {
+            dimension = "analytics"
+        }
+        create("analyticsDisabled") {
+            dimension = "analytics"
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -43,9 +52,7 @@ android {
 }
 
 dependencies {
-    // Firebase Analytics
-    implementation(platform(libs.google.firebase.bom))
-    implementation(libs.google.firebase.analytics)
+    implementation(project(":core:analytics"))
 
     // Coil
     implementation(libs.coil.compose)

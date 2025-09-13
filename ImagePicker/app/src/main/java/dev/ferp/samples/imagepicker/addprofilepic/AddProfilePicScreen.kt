@@ -144,5 +144,19 @@ private fun AddProfilePicScreen(
 @Preview(showSystemUi = true)
 @Composable
 private fun AddProfilePicScreenPreview() {
-    AddProfilePicScreen()
+    AddProfilePicScreen(
+        state = AddProfilePicUiState(
+            pictureUri = null
+        )
+    )
+}
+
+@Preview(showSystemUi = true)
+@Composable
+private fun EditOrClearProfilePicScreenPreview() {
+    AddProfilePicScreen(
+        state = AddProfilePicUiState(
+            pictureUri = "content://pictures/1"
+        )
+    )
 }

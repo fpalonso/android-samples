@@ -25,6 +25,20 @@ android {
             )
         }
     }
+    flavorDimensions += "analytics"
+    productFlavors {
+        create("analyticsEnabled") {
+            dimension = "analytics"
+            buildConfigField("boolean", "ANALYTICS_ENABLED", "true")
+        }
+        create("analyticsDisabled") {
+            dimension = "analytics"
+            buildConfigField("boolean", "ANALYTICS_ENABLED", "false")
+        }
+    }
+    buildFeatures {
+        buildConfig = true
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -38,6 +52,10 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+
+    // Firebase Analytics
+    implementation(platform(libs.google.firebase.bom))
+    implementation(libs.google.firebase.analytics)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
