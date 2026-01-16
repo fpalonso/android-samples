@@ -61,7 +61,7 @@ private fun GalleryScreen(
             GalleryItem(
                 pictureUrl = item.pictureUrl,
                 text = stringResource(R.string.picture_x, index + 1),
-                isLoading = item.isLoading,
+                isLoading = state.loadingIndex == index,
                 onClick = { onItemClick(index) }
             )
         }

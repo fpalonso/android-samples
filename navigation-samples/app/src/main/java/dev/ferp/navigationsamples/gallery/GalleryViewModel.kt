@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.ferp.navigationsamples.data.PictureRepository
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -13,7 +14,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class GalleryUiState(
-    val items: List<GalleryItemModel> = emptyList()
+    val items: List<GalleryItemModel> = emptyList(),
+    val loadingIndex: Int? = null
 )
 
 enum class GalleryError {
@@ -37,6 +39,15 @@ class GalleryViewModel @Inject constructor(
     val events: SharedFlow<GalleryEvent>
         field = MutableSharedFlow()
 
+    private var loadingIndex: Int? = null
+        set(value) = uiState.update { currentState ->
+            currentState.copy(
+                loadingIndex = value
+            )
+        }
+
+    private var processItemJob: Job? = null
+
     init {
         loadGallery()
     }
@@ -59,27 +70,15 @@ class GalleryViewModel @Inject constructor(
     }
 
     internal fun onItemClick(index: Int) {
-        viewModelScope.launch {
-            setItemLoadingState(index, true)
+        processItemJob?.cancel()
+        processItemJob = viewModelScope.launch {
+            loadingIndex = index
             if (pictureRepository.areDetailsAvailable(index)) {
                 events.emit(GalleryEvent.NavigationToDetails(index))
             } else {
                 events.emit(GalleryEvent.DetailsUnavailable(index))
             }
-            setItemLoadingState(index, false)
-        }
-    }
-
-    private fun setItemLoadingState(index: Int, isLoading: Boolean) {
-        uiState.update { currentState ->
-            val newItems = currentState.items.mapIndexed { itemIndex, item ->
-                if (itemIndex == index) {
-                    item.copy(isLoading = isLoading)
-                } else {
-                    item
-                }
-            }
-            currentState.copy(items = newItems)
+            loadingIndex = null
         }
     }
 }
