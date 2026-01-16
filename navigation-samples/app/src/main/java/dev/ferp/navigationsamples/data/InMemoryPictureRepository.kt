@@ -4,7 +4,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.random.Random
 
 class InMemoryPictureRepository @Inject constructor() : PictureRepository {
 
@@ -16,10 +15,10 @@ class InMemoryPictureRepository @Inject constructor() : PictureRepository {
         )
     }
 
-    override suspend fun areDetailsAvailable(picture: Picture): Boolean {
+    override suspend fun areDetailsAvailable(index: Int): Boolean {
         return withContext(Dispatchers.IO) {
-            delay(300) // Fake network delay
-            Random.nextBoolean()
+            delay(1_000) // Fake network delay
+            index < 5
         }
     }
 }
