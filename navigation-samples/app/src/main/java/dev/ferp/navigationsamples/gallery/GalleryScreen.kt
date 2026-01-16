@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -27,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import dev.ferp.navigationsamples.R
 import dev.ferp.navigationsamples.ui.theme.NavigationSamplesTheme
 
@@ -59,6 +62,7 @@ private fun GalleryScreen(
     ) {
         itemsIndexed(items = state.items) { index, item ->
             GalleryItem(
+                key = index.toString(),
                 pictureUrl = item.pictureUrl,
                 text = stringResource(R.string.picture_x, index + 1),
                 isLoading = state.loadingIndex == index,
@@ -70,6 +74,7 @@ private fun GalleryScreen(
 
 @Composable
 private fun GalleryItem(
+    key: String,
     pictureUrl: String,
     text: String,
     modifier: Modifier = Modifier,
@@ -90,9 +95,15 @@ private fun GalleryItem(
                 contentScale = imageContentScale
             )
         } else {
+            val context = LocalContext.current
             AsyncImage(
                 modifier = imageModifier,
-                model = pictureUrl,
+                model = ImageRequest
+                    .Builder(context)
+                    .data(pictureUrl)
+                    .memoryCacheKey(key)
+                    .diskCachePolicy(CachePolicy.DISABLED)
+                    .build(),
                 contentDescription = null,
                 contentScale = imageContentScale
             )
@@ -116,6 +127,7 @@ private fun GalleryItem(
 @Composable
 private fun GalleryItemPreview() {
     GalleryItem(
+        key = "",
         pictureUrl = "",
         text = "Cute dog",
         isLoading = true
