@@ -5,11 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
-import dev.ferp.navigationsamples.gallery.GalleryScreen
 import dev.ferp.navigationsamples.ui.theme.NavigationSamplesTheme
 
 @AndroidEntryPoint
@@ -19,13 +16,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NavigationSamplesTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    GalleryScreen(
-                        Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                    )
-                }
+                MainScreen(Modifier.fillMaxSize())
             }
         }
     }

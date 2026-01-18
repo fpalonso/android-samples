@@ -14,6 +14,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import dev.ferp.navigationsamples.R
 import dev.ferp.navigationsamples.ui.theme.NavigationSamplesTheme
@@ -36,9 +36,22 @@ import dev.ferp.navigationsamples.ui.theme.NavigationSamplesTheme
 @Composable
 fun GalleryScreen(
     modifier: Modifier = Modifier,
-    viewModel: GalleryViewModel = hiltViewModel()
+    viewModel: GalleryViewModel = hiltViewModel(),
+    showDetails: (pictureId: String) -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is GalleryEvent.NavigationToDetails -> {
+                    showDetails(event.pictureId)
+                }
+                else -> {}
+            }
+        }
+    }
+
     GalleryScreen(
         modifier = modifier,
         state = state,
@@ -52,30 +65,31 @@ private fun GalleryScreen(
     modifier: Modifier = Modifier,
     onItemClick: (Int) -> Unit = {}
 ) {
-    LazyVerticalGrid(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        columns = GridCells.Adaptive(minSize = 160.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        itemsIndexed(items = state.items) { index, item ->
-            GalleryItem(
-                key = index.toString(),
-                pictureUrl = item.pictureUrl,
-                text = stringResource(R.string.picture_x, index + 1),
-                isLoading = state.loadingIndex == index,
-                onClick = { onItemClick(index) }
-            )
+    Scaffold(Modifier.fillMaxSize()) { paddingValues ->
+        LazyVerticalGrid(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            columns = GridCells.Adaptive(minSize = 160.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            itemsIndexed(items = state.items) { index, item ->
+                GalleryItem(
+                    model = item,
+                    text = stringResource(R.string.picture_x, index + 1),
+                    isLoading = state.loadingIndex == index,
+                    onClick = { onItemClick(index) }
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun GalleryItem(
-    key: String,
-    pictureUrl: String,
+    model: GalleryItemModel,
     text: String,
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
@@ -98,11 +112,10 @@ private fun GalleryItem(
             val context = LocalContext.current
             AsyncImage(
                 modifier = imageModifier,
-                model = ImageRequest
-                    .Builder(context)
-                    .data(pictureUrl)
-                    .memoryCacheKey(key)
-                    .diskCachePolicy(CachePolicy.DISABLED)
+                model = ImageRequest.Builder(context)
+                    .data(model.pictureUrl)
+                    .memoryCacheKey(model.pictureId)
+                    .diskCacheKey(model.pictureId)
                     .build(),
                 contentDescription = null,
                 contentScale = imageContentScale
@@ -127,8 +140,7 @@ private fun GalleryItem(
 @Composable
 private fun GalleryItemPreview() {
     GalleryItem(
-        key = "",
-        pictureUrl = "",
+        model = GalleryItemModel("", ""),
         text = "Cute dog",
         isLoading = true
     )
@@ -145,7 +157,7 @@ private fun GalleryPreview() {
                     .padding(contentPadding),
                 state = GalleryUiState(
                     items = (1..10).map {
-                        GalleryItemModel(pictureUrl = "")
+                        GalleryItemModel("", "")
                     }
                 )
             )

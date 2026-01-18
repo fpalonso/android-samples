@@ -19,11 +19,11 @@ data class GalleryUiState(
 )
 
 enum class GalleryError {
-    ERROR_LOADING_IMAGES
+    ERROR_LOADING_GALLERY
 }
 
 sealed interface GalleryEvent {
-    data class NavigationToDetails(val index: Int) : GalleryEvent
+    data class NavigationToDetails(val pictureId: String) : GalleryEvent
     data class DetailsUnavailable(val index: Int) : GalleryEvent
     data class Error(val cause: GalleryError) : GalleryEvent
 }
@@ -63,7 +63,7 @@ class GalleryViewModel @Inject constructor(
                     }
                 },
                 onFailure = {
-                    events.emit(GalleryEvent.Error(GalleryError.ERROR_LOADING_IMAGES))
+                    events.emit(GalleryEvent.Error(GalleryError.ERROR_LOADING_GALLERY))
                 }
             )
         }
@@ -74,7 +74,8 @@ class GalleryViewModel @Inject constructor(
         processItemJob = viewModelScope.launch {
             loadingIndex = index
             if (pictureRepository.areDetailsAvailable(index)) {
-                events.emit(GalleryEvent.NavigationToDetails(index))
+                val pictureId = uiState.value.items[index].pictureId
+                events.emit(GalleryEvent.NavigationToDetails(pictureId))
             } else {
                 events.emit(GalleryEvent.DetailsUnavailable(index))
             }

@@ -1,5 +1,7 @@
 package dev.ferp.navigationsamples.data
 
 data class Picture(
-    val url: String
+    val id: String,
+    val url: String,
+    val thumbnailUrl: String
 )
